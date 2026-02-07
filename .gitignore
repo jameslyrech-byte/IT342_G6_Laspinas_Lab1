@@ -1,0 +1,10 @@
+# IDE folders
+.idea/
+.vscode/
+
+# Node
+node_modules/
+web/dist/
+
+# Java/IDE files
+*.iml

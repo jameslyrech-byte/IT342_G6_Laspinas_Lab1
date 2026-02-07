@@ -26,17 +26,36 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
+      if (!formData.username || !formData.password) {
+        setError('Username and password are required');
+        setLoading(false);
+        return;
+      }
+
+      console.log('Submitting login with:', { username: formData.username });
+      
       const response = await authService.login(formData);
+      
+      console.log('Login response:', response.data);
+      
       if (response.data.success) {
         const { token, data } = response.data;
         localStorage.setItem('token', token);
         localStorage.setItem('user', JSON.stringify(data));
+        console.log('Login successful, redirecting to dashboard');
         navigate('/dashboard');
       } else {
-        setError(response.data.message);
+        setError(response.data.message || 'Login failed');
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed');
+      console.error('Login error details:', {
+        message: err.message,
+        response: err.response?.data,
+        status: err.response?.status,
+        config: err.config?.url
+      });
+      const errorMessage = err.response?.data?.message || err.message || 'Login failed. Please check your credentials.';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

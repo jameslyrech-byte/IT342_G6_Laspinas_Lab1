@@ -30,17 +30,55 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
+      // Validate inputs before submitting
+      if (formData.password.length < 6) {
+        setError('Password must be at least 6 characters');
+        setLoading(false);
+        return;
+      }
+
+      if (formData.password !== formData.confirmPassword) {
+        setError('Passwords do not match');
+        setLoading(false);
+        return;
+      }
+
+      console.log('Submitting registration with:', { username: formData.username, email: formData.email });
+      
       const response = await authService.register(formData);
+      
+      console.log('Registration response:', response.data);
+      
       if (response.data.success) {
         setSuccess('Registration successful! Redirecting to login...');
         setTimeout(() => {
           navigate('/login');
         }, 2000);
       } else {
-        setError(response.data.message);
+        setError(response.data.message || 'Registration failed');
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed');
+      console.error('❌ Registration error:', {
+        message: err.message,
+        status: err.response?.status,
+        statusText: err.response?.statusText,
+        data: err.response?.data,
+        url: err.config?.url,
+        method: err.config?.method,
+        fullError: err
+      });
+      
+      let errorMessage = 'Registration failed. ';
+      
+      if (err.message === 'Network Error' || !err.response) {
+        errorMessage = 'Cannot reach backend. Make sure http://localhost:8080 is running.';
+      } else if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else {
+        errorMessage += err.message || 'Check browser console (F12) for details.';
+      }
+      
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

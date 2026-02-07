@@ -1,5 +1,6 @@
 package com.auth.security;
 
+import com.auth.config.CorsFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +24,7 @@ import java.util.Arrays;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final CorsFilter corsFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -45,16 +47,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/user/**").authenticated()
+                .authorizeRequests()
+                        .antMatchers(HttpMethod.POST, "/auth/register").permitAll()
+                        .antMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                        .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .antMatchers("/auth/**").permitAll()
+                        .antMatchers("/user/**").authenticated()
                         .anyRequest().authenticated()
-                )
+                        .and()
+                .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
