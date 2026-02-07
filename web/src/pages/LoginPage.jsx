@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../services/api';
-import './AuthForm.css';
+import '../components/AuthForm.css';
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
