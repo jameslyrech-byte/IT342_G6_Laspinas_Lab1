@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 *.iml
 .gradle
 /local.properties
@@ -13,3 +14,15 @@
 .externalNativeBuild
 .cxx
 local.properties
+=======
+# IDE folders
+.idea/
+.vscode/
+
+# Node
+node_modules/
+web/dist/
+
+# Java/IDE files
+*.iml
+>>>>>>> a5e0cb29c6998023d070bf043d39bd2542689c79
