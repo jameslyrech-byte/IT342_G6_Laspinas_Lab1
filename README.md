@@ -1,4 +1,4 @@
-# IT342_G5_Laspinas_Lab1
+# IT342_G6_Laspinas_Lab1
 ## User Registration and Authentication System
 
 A complete, production-ready user registration and authentication system with Spring Boot backend and ReactJS frontend.
